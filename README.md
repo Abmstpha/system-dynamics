@@ -266,13 +266,26 @@ AI TASK/
 
 ### Prerequisites
 ```bash
-# Activate the virtual environment
-cd "/Users/abdu07/Desktop/PGE5/Industrial AI/" && source venv/bin/activate && cd "AI TASK"
+# Navigate to workspace and activate virtual environment
+cd "/Users/abdu07/Desktop/PGE5/Industrial AI"
+source venv/bin/activate
+cd "AI TASK"
 ```
 
 ### Backend Setup
 ```bash
 cd backend
+
+# Create .env file with your API keys
+cat > .env << EOF
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com
+LANGSMITH_API_KEY=your_langsmith_api_key
+LANGSMITH_PROJECT="systemdynamics"
+Google_API_KEY=your_google_api_key
+EOF
+
+# Install dependencies and run
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
@@ -287,7 +300,68 @@ npm run dev
 ### Access
 - **Frontend:** http://localhost:5173
 - **API Docs:** http://localhost:8000/docs
-- **API:** http://localhost:8000/api/v1
+- **Health Check:** http://localhost:8000/health
+
+---
+
+## 🖥️ How to Use the UI
+
+### 1. Dashboard (Home Page)
+The landing page shows:
+- Platform overview and capabilities
+- Two company use cases: **Aerodin Systems** (Defense) and **Euromotion Automotive** (EV)
+- Quick links to start building models
+
+### 2. Model Builder (`/build`)
+**This is the main AI-powered feature:**
+
+1. **Enter a natural language prompt** in the text area, for example:
+   - *"Model a defense contractor balancing workforce hiring with project delivery deadlines"*
+   - *"Create a model for EV battery supplier dealing with market growth and capacity constraints"*
+
+2. **Click "Generate Model"** — the LangGraph agent will:
+   - Detect which company schema to use (Aerodin or Euromotion)
+   - Call `get_schema` to retrieve allowed IDs
+   - Build a valid model using ONLY whitelisted stocks, flows, parameters
+   - Validate against strict Pydantic schema
+
+3. **View the generated model** in JSON format
+
+4. **Click "Run Simulation"** to execute the model
+
+5. **See results** as interactive charts showing stock levels over time
+
+6. **Export** the model as JSON for later use
+
+### 3. Simulation Page (`/simulate`)
+**For interactive what-if analysis:**
+
+1. **Select a pre-built example** from the dropdown:
+   - Aerodin Systems - Workforce Planning
+   - Euromotion - EV Market Growth
+
+2. **Adjust parameters** using sliders:
+   - Change hiring rates, production capacity, etc.
+   - See how different values affect the system
+
+3. **Click "Run Simulation"** to see updated results
+
+4. **Compare scenarios** by adjusting parameters and re-running
+
+### 4. Examples Page (`/examples`)
+Browse pre-built models and understand how System Dynamics works.
+
+---
+
+## 🔧 API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check |
+| `/api/v1/agent/schemas` | GET | Get company schemas (allowed IDs) |
+| `/api/v1/agent/translate` | POST | Translate NL to SD model |
+| `/api/v1/simulate/` | POST | Run simulation on a model |
+| `/api/v1/models/examples/{id}` | GET | Get example model |
 
 ---
 
@@ -313,16 +387,18 @@ The LLM agent is **sandboxed**:
 ## 📈 Roadmap
 
 - [x] Project setup & architecture
-- [ ] Core JSON schema definition
-- [ ] Deterministic simulation engine
-- [ ] FastAPI backend structure
-- [ ] LLM agent for NL→JSON
-- [ ] React frontend UI
-- [ ] Model builder interface
-- [ ] Scenario comparison
-- [ ] Export & reporting
+- [x] Core JSON schema definition (Layer 1: core.py)
+- [x] Company-specific schemas (Layer 2: company_schemas.py)
+- [x] Deterministic simulation engine (scipy)
+- [x] FastAPI backend structure
+- [x] LangGraph ReAct agent for NL→JSON
+- [x] React frontend UI
+- [x] Model builder interface
+- [x] LangSmith tracing integration
+- [ ] Scenario comparison (side-by-side)
+- [ ] Export & reporting (PDF)
 - [ ] Authentication & multi-tenant
-- [ ] Pre-built templates for defense & automotive
+- [ ] Pre-built templates library
 
 ---
 

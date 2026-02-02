@@ -13,11 +13,14 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "System Dynamics Platform"
     
-    # LLM
-    GOOGLE_API_KEY: str = os.getenv("Google-API_KEY", "")
+    # LLM - Google
+    GOOGLE_API_KEY: str = os.getenv("Google_API_KEY", "")
+    
+    # LangSmith
     LANGSMITH_API_KEY: str = os.getenv("LANGSMITH_API_KEY", "")
     LANGSMITH_PROJECT: str = os.getenv("LANGSMITH_PROJECT", "systemdynamics")
     LANGSMITH_TRACING: bool = os.getenv("LANGSMITH_TRACING", "true").lower() == "true"
+    LANGSMITH_ENDPOINT: str = os.getenv("LANGSMITH_ENDPOINT", "https://eu.api.smith.langchain.com")
     
     # Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./system_dynamics.db"
