@@ -13,16 +13,34 @@ Transform how strategic teams explore "what-if" scenarios. Instead of building c
 ```
 "What happens to our production if semiconductor supply drops 30% for 6 months?"
                                     ↓
-                         [LLM translates to JSON]
+                      [LLM Agent - Schema-Bound Compiler]
                                     ↓
-                    [Deterministic Simulation Engine]
+                    [Strict Pydantic Validation - Closed World]
+                                    ↓
+                    [Deterministic Simulation Engine (scipy)]
                                     ↓
                       📊 Actionable insights & graphs
 ```
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Two-Layer Architecture
+
+### Layer 1: Universal System Dynamics Core
+Immutable concepts shared by ALL companies:
+- **Stocks** (accumulations)
+- **Flows** (rates of change)
+- **Auxiliaries** (intermediate calculations)
+- **Parameters** (constants)
+- **Time settings** (start, end, dt)
+
+### Layer 2: Company Domain Schemas (CLOSED-WORLD)
+Each company gets a strict whitelist - anything outside = HARD FAIL:
+
+| Company | Domain | Key Stocks | Forbidden Structures |
+|---------|--------|------------|---------------------|
+| **Aerodin Systems** | Defense | regulatory_backlog, certified_ai_modules, public_trust_level | No direct capability→revenue |
+| **Euromotion Automotive** | EV Manufacturing | battery_inventory, semiconductor_inventory, production_capacity | No ethics/political stocks |
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -38,14 +56,16 @@ Transform how strategic teams explore "what-if" scenarios. Instead of building c
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐     │
-│  │   LLM Agent     │    │   JSON Schema   │    │   Simulation    │     │
-│  │                 │───▶│   Validator     │───▶│   Engine        │     │
-│  │ (Non-determin.) │    │ (Strict rules)  │    │ (Deterministic) │     │
+│  │  LangGraph      │    │   Pydantic      │    │   Simulation    │     │
+│  │  ReAct Agent    │───▶│   Strict Schema │───▶│   Engine        │     │
+│  │ (Schema Compiler)│   │ (Closed-World)  │    │ (Deterministic) │     │
 │  └─────────────────┘    └─────────────────┘    └─────────────────┘     │
 │                                                                         │
-│  • Translates NL → JSON  • Validates structure   • Pure math (scipy)   │
-│  • ONLY touches schema   • Type checking         • Reproducible        │
-│  • Guardrails            • Business rules        • Auditable           │
+│  Agent MAY:              Validates:            Pure math (scipy):       │
+│  • Select from schema    • Allowed IDs only    • ODE integration        │
+│  • Change parameters     • Forbidden edges     • Reproducible           │
+│  Agent MAY NOT:          • Equation refs       • Auditable              │
+│  • Invent new types      • Graph constraints                            │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
